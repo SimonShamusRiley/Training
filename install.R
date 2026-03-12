@@ -7,6 +7,7 @@ install.packages('car')
 install.packages('emmeans')
 install.packages('multcomp')
 install.packages('multcompView')
+install.packages('edibble')
 
 devtools::install_github('SimonShamusRiley/powerutilities', dependencies = T, 
                          build_vignettes = T)
