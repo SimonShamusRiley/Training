@@ -4,14 +4,6 @@
 
 #### Housekeeping ####
 # Install required packages
-install.packages('tidyverse')
-install.packages('devtools')
-install.packages('readxl')
-install.packages('writexl')
-install.packages('glmmTMB')
-install.packages('emmeans')
-install.packages('edibble')
-
 devtools::install_github('SimonShamusRiley/powerutilities', 
                          dependencies = TRUE, build_vignettes = TRUE)
 
