@@ -31,7 +31,7 @@ options(ggplot2.discrete.fill = pal, ggplot2.discrete.colour = pal)
 #### Import & Prep Data #### 
 # The International Potato Center has worked for many years to promote the
 # cultivation and consumption of orange-fleshed sweet potato (OFSP), which
-# is richer in beta carotine (pro-Vitamine A) than the white-fleshed varieties 
+# is richer in beta carotene (pro-Vitamin A) than the white-fleshed varieties 
 # which have historically been much more popular throughout many parts of the
 # world, and especially in tropical Africa. A sensory evaluation was undertaken
 # in Uganda to better understand consumer preferences:
