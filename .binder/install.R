@@ -4,10 +4,11 @@ install.packages(
   "edibble",
   "emmeans",
   "glmmTMB",
+  "ordinal",
+  "multcomp",
+  "multcompView",
   "powerutilities",
   "readxl",
   "tidyverse",
   "writexl")
 )
-devtools::install_github('SimonShamusRiley/powerutilities', dependencies = T,
-                         build_vignettes = T)

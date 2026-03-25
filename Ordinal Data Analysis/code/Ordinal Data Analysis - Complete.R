@@ -14,7 +14,7 @@ library(multcompView)
 library(writexl)
 
 # Global options
-setwd("C:/Users/au802896/Documents/Training/Ordinal Data Analysis")
+#setwd("C:/Users/au802896/Documents/Training/Ordinal Data Analysis")
 
 options(contrasts = c('contr.sum', 'contr.poly'),
         dplyr.width = Inf, pillar.print_min = 100, 
