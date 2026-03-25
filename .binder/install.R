@@ -5,6 +5,7 @@ install.packages(
   "emmeans",
   "glmmTMB",
   "ordinal",
+  "performance",
   "multcomp",
   "multcompView",
   "powerutilities",
