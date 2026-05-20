@@ -1,4 +1,0 @@
-#!/bin/bash
-mkdir -p /home/jovyan/.R/rstudio/keybindings
-echo '{}' > /home/jovyan/.R/rstudio/keybindings/addins.json
-exec "$@"
