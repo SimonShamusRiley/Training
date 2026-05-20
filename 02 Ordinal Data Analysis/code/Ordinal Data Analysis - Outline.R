@@ -47,13 +47,16 @@ excel_sheets(ofsp_file)
 
 # Read-in and format data:
 
-#### Overall Score ####
+#### Example 1: Overall Score ####
 ##### Data Exploration & Validation ####
 ##### Model Development & Evaluation ####
 ##### Estimation, Testing & Reporting ####
 
-#### Firmness Score ####
+#### Example 2: Firmness Score ####
 ##### Data Exploration & Validation ####
 ##### Model Development & Evaluation ####
 ##### Estimation, Testing & Reporting ####
 
+#### Going Further: Incorporating Random Effects ####
+##### Model Development & Evaluation ####
+##### Estimation, Testing & Reporting ####

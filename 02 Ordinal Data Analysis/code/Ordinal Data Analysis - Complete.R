@@ -59,7 +59,7 @@ ofsp = read_xlsx(ofsp_file, sheet = 'Sweetpotato Lira') |>
 
 head(ofsp)
 
-#### Overall Score ####
+#### Example 1: Overall Score ####
 ##### Data Exploration & Validation ####
 ggplot(ofsp, aes(x = Overall))+
   facet_wrap(~ Cultivar)+
@@ -67,39 +67,39 @@ ggplot(ofsp, aes(x = Overall))+
 
 ##### Model Development & Evaluation ####
 # Fit a "base" model:
-ofsp_mod1 = clm(Overall ~ Cultivar, data = ofsp, link = 'logit')
+overall_mod1 = clm(Overall ~ Cultivar, data = ofsp, link = 'logit')
 
 # Unfortunately, there are not good tools for residual diagnostics,
 # although we do have a couple of tests for the model assumptions:
-nominal_test(ofsp_mod1)
-scale_test(ofsp_mod1)
+nominal_test(overall_mod1)
+scale_test(overall_mod1)
 
 # Can model fit be improved by incorporating sex in the model? 
-ofsp_mod2 = clm(Overall ~ Cultivar*Sex, data = ofsp, link = 'logit')
-nominal_test(ofsp_mod2)
-scale_test(ofsp_mod2)
+overall_mod2 = clm(Overall ~ Cultivar*Sex, data = ofsp, link = 'logit')
+nominal_test(overall_mod2)
+scale_test(overall_mod2)
 
 # No, there is no evidence to suggest that men's and women's perceptions differ:
-compare_performance(ofsp_mod1, ofsp_mod2)
+compare_performance(overall_mod1, overall_mod2)
 
 # Can model fit be improved by using an alternative link function? No, these
 # models are basically equivalent
-ofsp_mod3 = clm(Overall ~ Cultivar, data = ofsp, link = 'probit')
-compare_performance(ofsp_mod1, ofsp_mod3)
+overall_mod3 = clm(Overall ~ Cultivar, data = ofsp, link = 'probit')
+compare_performance(overall_mod1, overall_mod3)
 
 # Proceed with initial model
-ofsp_mod = ofsp_mod1
+overall_mod = overall_mod1
 
 ##### Estimation, Testing and Reporting ####
 # Wald Chi-square test (= asympotitic F-test)
-(ofsp_ftest = joint_tests(ofsp_mod))
+(ofsp_ftest = joint_tests(overall_mod))
 
 # There are many types of emmeans which can be calculated for ordinal models,
 # this is controlled with the "mode = " argument, and is described in:
 vignette('models', package = 'emmeans')
 
 # For a single overall measure of score for each treatment:
-(ofsp_latent_emm = emmeans(ofsp_mod, ~ Cultivar, mode = 'latent'))
+(ofsp_latent_emm = emmeans(overall_mod, ~ Cultivar, mode = 'latent'))
 
 # Where one of our cultivars is a "check" or a "standard", we can make 
 # overall comparisons against that:
@@ -115,7 +115,7 @@ vignette('models', package = 'emmeans')
 # We are often interested in the probability of achieving specific scores
 # or exceeding some score. This gives us the probabilities associated with
 # each score:
-(ofsp_prob_emm = emmeans(ofsp_mod, ~ Cultivar:Overall, mode = 'prob'))
+(ofsp_prob_emm = emmeans(overall_mod, ~ Cultivar:Overall, mode = 'prob'))
 
 ofsp_prob_emm |> 
   as.data.frame() |> 
@@ -126,7 +126,7 @@ ofsp_prob_emm |>
 
 # For exceedance probabilities, the "psuedo-variable" is called "cut" instead
 # of the name of the response variable:
-(ofsp_exprob_emm = emmeans(ofsp_mod, ~ Cultivar:cut, mode = 'exc.prob'))
+(ofsp_exprob_emm = emmeans(overall_mod, ~ Cultivar:cut, mode = 'exc.prob'))
 
 # Imagine we want to see/compare probabilities of 7 or higher:
 ofsp_exprob_emm |> 
@@ -137,7 +137,7 @@ ofsp_exprob_emm |>
   geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = .1) +
   scale_y_continuous(limits = c(0, NA))
 
-#### Firmness Score ####
+#### Example 2: Firmness Score ####
 ##### Data Exploration & Validation ####
 ggplot(ofsp, aes(x = Firmness))+
   facet_wrap(~ Cultivar)+
@@ -185,7 +185,57 @@ firm_prob_cld |>
     geom_text(aes(y = asymp.UCL+.1, label = .group)) +
     scale_y_continuous(limits = c(0, NA))
 
+#### Going Further: Incorporating Random Effects ####
+# The preceding analyses implicitly assumed that each row of our data
+# constitutes an independent observation, but in fact this is not the case: each
+# participant was asked to assess all four varieties, and we would expect those
+# four ratings from each participant to be correlated. We can think of this
+# correlation in terms of each participant representing a "block" of
+# observations, or we can think of this in terms of respondents' individual
+# preferences (e.g., a respondent who dislikes sweet potato might give low
+# ratings to all varieties, while one who loves sweet potato might rank all
+# varieties  highly). Although not the case here, it is especially important
+# account for this grouping pattern in the data when the data are not balanced,
+# either because different participants were asked to assess different sets of
+# cultivars, or because some observations are missing. Accounting for this 
+# grouping structure is done using random effects.
 
+##### Model Development & Evaluation ####
+# Random effects are entered into the model formula in parentheses, with the
+# grouping factor(s) on the right hand side of the "|", and the random 
+# effects themselves (often, just an intercept denoted using the number "1") on
+# the left hand side of the "|":
+overall_mixmod = clmm(Overall ~ Cultivar + (1|Consumers), data = ofsp,
+                      link = 'logit')
 
+# Unfortunately, we have even fewer tools for model diagnostics when using clmm.
+# We can still use information criteria or likelihood ratio test (not shown) 
+# for model comparison. Here, we see that in this instance model fit is not
+# actually improved by accounting for the random effects. Nevertheless, many 
+# would argue that it should remain in the model because the grouping structure
+# which the random effect represents is inherent to the design of the study.
+AIC(overall_mod, overall_mixmod)
 
+##### Estimation, Testing and Reporting ####
+# Random effects are defined as having a mean of zero, so that the fixed effects 
+# can be interpreted as the expected average across the whole population (known
+# as "best linear unbiased estimates", or BLUEs). 
+overall_raneff = ranef(overall_mixmod)$Consumers |> 
+  rownames_to_column(var = 'Consumers') |> 
+  arrange(`(Intercept)`)
 
+hist(overall_raneff$`(Intercept)`)
+
+# What is estimated is the variance among participants (in this example):
+VarCorr(overall_mixmod, format = TRUE) # Variance (on logit scale)
+
+# And from that, predictions can be made about individual participants (known 
+# as "best linear unbiased predictions", or BLUPs):
+head(overall_raneff) # These people are critical, or just dislike OFSP
+tail(overall_raneff) # These people are not critical, or very much like OFSP
+
+# Because the data are balanced and the variance among participants is modest,
+# there is little change to the model estimates, standard errors or confidence
+# intervals (but this will, of course, not always be the case):
+emmeans(overall_mixmod, ~ Cultivar)
+emmeans(overall_mod, ~ Cultivar)
