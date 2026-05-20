@@ -90,7 +90,7 @@ compare_performance(overall_mod1, overall_mod3)
 # Proceed with initial model
 overall_mod = overall_mod1
 
-##### Estimation, Testing and Reporting ####
+##### Estimation, Testing & Reporting ####
 # Wald Chi-square test (= asympotitic F-test)
 (ofsp_ftest = joint_tests(overall_mod))
 
@@ -216,7 +216,7 @@ overall_mixmod = clmm(Overall ~ Cultivar + (1|Consumers), data = ofsp,
 # which the random effect represents is inherent to the design of the study.
 AIC(overall_mod, overall_mixmod)
 
-##### Estimation, Testing and Reporting ####
+##### Estimation, Testing & Reporting ####
 # Random effects are defined as having a mean of zero, so that the fixed effects 
 # can be interpreted as the expected average across the whole population (known
 # as "best linear unbiased estimates", or BLUEs). 
